@@ -45,7 +45,7 @@ BERT的输入表示能够在一个token序列中表示单个文本或者一对�
 &emsp;&emsp;"[CLS]"符号被添加到每个输入语句的开始作为第一个字符。Transformer输出的相对于第一个token的最终隐藏状态向量用于表示整个输入语句以进行分类任务。如果在一个任务中由两个语句，则"[SEP]"符号用于分隔两个语句。
 &emsp;&emsp;BERT使用以下预训练目标来预训练模型参数：the masked language model(MLM),它会从输入中随机掩盖一些token，并设置优化目标以根据其上下文预测被掩盖词的原始ID。不同于left-to-right语言模型预训练，MLM目标可以帮助状态输出同时利用左右上下文，从而允许预训练系统应用深度双向Transformer。除了MLM外，BERT也训练一个“NSP”任务。
 
-## 3.2 模型架构
+### 3.2 模型架构
 
 ![r-bert模型架构.png](http://ww1.sinaimg.cn/large/af3444adgy1gfu7zpbfg8j20kq0e775g.jpg)
 
@@ -79,7 +79,24 @@ $$
 其中,$W_3 \in R^{L \times 3d}$,$L$为关系数量，$p$为概率输出，$b_0,b_1,b_2,b_3$是偏置向量。
 &emsp;&emsp;使用交叉熵作为损失函数，在每个全连接层前应用dropout。我们称本文使用的方法为R-BERT。
 
-# 4.实验
+## 4.实验
 
-## 4.1 数据集和评估指标
+### 4.1 数据集和评估指标
+&emsp;&emsp;我们使用SemEval-2010 Task 8数据集进行实验，该数据集包含9个语义关系类型和1个人工关系类型"Other"，该关系类型表示所有不属于那9个类型的关系。9个关系类型为：
+Cause-Effect, Component-Whole, Content-Container, Entity-Destination, Entity-Origin, Instrument-Agency, Member-Collection, Message-Topic and Product-Producer. 
+该数据集有10717条样本，每个样本包含两个实体$e_1$和$e_2$以及他们的关系类型。关系是有方向的，意味着Component-Whole$(e_1, e_2)$和 Component-Whole$(e_2, e_1)$是不同的。数据集划分为训练集8000和测试集2717。使用SemEval-2010 Task 8官方评分脚本进行评估。为9中关系类型计算宏平均F1分数，并且要考虑方向性。
+
+### 4.2 参数设置
+
+![r-bert模型参数设置.png](http://ww1.sinaimg.cn/large/af3444adgy1gfu9buw2fxj208t05jdfz.jpg)
+
+
+### 4.3 与其他方法的比较
+
+![r-bert模型与其他方法的比较.png](http://ww1.sinaimg.cn/large/af3444adgy1gfu9e32vehj20cv0gqabh.jpg)
+
+
+### 4.4 消融研究
+
+![r-bert消融研究.png](http://ww1.sinaimg.cn/large/af3444adgy1gfu9g99pchj20du06b0t4.jpg)
 
