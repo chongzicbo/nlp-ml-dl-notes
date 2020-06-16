@@ -39,3 +39,47 @@
 ## 3.方法
 
 ### 3.1 预训练模型BERT
+
+&emsp;&emsp;预训练模型bert是一个多层双向Transformer 编码器。
+BERT的输入表示能够在一个token序列中表示单个文本或者一对文本。每个token的输入表示由相应的token、segment和位置编码向量的总和构成。
+&emsp;&emsp;"[CLS]"符号被添加到每个输入语句的开始作为第一个字符。Transformer输出的相对于第一个token的最终隐藏状态向量用于表示整个输入语句以进行分类任务。如果在一个任务中由两个语句，则"[SEP]"符号用于分隔两个语句。
+&emsp;&emsp;BERT使用以下预训练目标来预训练模型参数：the masked language model(MLM),它会从输入中随机掩盖一些token，并设置优化目标以根据其上下文预测被掩盖词的原始ID。不同于left-to-right语言模型预训练，MLM目标可以帮助状态输出同时利用左右上下文，从而允许预训练系统应用深度双向Transformer。除了MLM外，BERT也训练一个“NSP”任务。
+
+## 3.2 模型架构
+
+![r-bert模型架构.png](http://ww1.sinaimg.cn/large/af3444adgy1gfu7zpbfg8j20kq0e775g.jpg)
+
+&emsp;&emsp;上图1为本文的方法结构。对于有两个目标实体$e_1$和$e_2$的语句$s$来说，为了让BERT模块能够获取两个实体的位置信息，在第一个位置实体的前后插入"$"符号，在第二个实体的前后插入"#"符号。每个句子开始也会添加"[CLS]"符号。举例说明，在插入一个特殊的分隔符后，一个拥有两个实体"kitchen"和"house"的语句将变成：\
+
+“[CLS] The $ kitchen $ is the last renovated part of the # house # . ”
+
+&emsp;&emsp;给定一个包含实体$e_1$和$e_2$的语句$s$，假设根据BERT获取它的最终隐藏状态为$H$,假设实体$e_1$的隐藏向量为$H_i$到$H_j$，实体$e_2$的隐藏向量为$H_k$和$H_m$。我们对每个实体的所有向量进行求平均。然后再添加激活函数并添加一个全连接层。于是$e_1$和$e_2$转换为$H^{'}_1$,如下：
+
+$$
+    H^{'}_1=W_1[tanh(\frac{1}{j-i+1}\sum_{t=i}^jH_t)]+b_1
+$$
+
+$$
+    H^{'}_2=W_2[tanh(\frac{1}{m-k+1}\sum_{t=k}^mH_t)]+b_2
+$$
+
+其中，$W_1$和$W_2$共享参数，$b_1$和$b_2$共享参数，即$W_1=W_2,b_1=b_2$。对于第一个token（[CLS]）所表示的最终隐藏状态向量，也添加一个激活函数和全连接层。
+$$
+H_0^{'}=W_0(tanh(H_0))+b_0
+$$
+
+其中,$W_0 \in R^{d \times d},W_1 \in R^{d \times d},W_2 \in R^{d \times d}$,$d$表示BERT的hidden_size.
+
+&emsp;&emsp;将$H_0^{'},H_1^{'},H_2^{'}$进行concatenate，然后添加全连接层和softmax层。
+
+$$
+h^{''}=W_3[concat(H_0^{'},H_1^{'},H_2^{'})]+b_3
+p=softmax(h^{''})
+$$
+其中,$W_3 \in R^{L \times 3d}$,$L$为关系数量，$p$为概率输出，$b_0,b_1,b_2,b_3$是偏置向量。
+&emsp;&emsp;使用交叉熵作为损失函数，在每个全连接层前应用dropout。我们称本文使用的方法为R-BERT。
+
+# 4.实验
+
+## 4.1 数据集和评估指标
+
