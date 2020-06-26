@@ -18,7 +18,7 @@ $$
 
 ## 2.2 含隐藏状态的循环神经网络
 
-现在我们考虑输入数据存在时间相关性的情况。假设$\boldsymbol{X}_t \in \mathbb{R}^{n \times d}$是序列中时间步tt的小批量输入，$\boldsymbol{H}_t \in \mathbb{R}^{n \times h}$是该时间步的隐藏变量。与多层感知机不同的是，这里我们保存上一时间步的隐藏变量$H_{t−1}$，并引入一个新的权重参数$\boldsymbol{W}_{hh} \in \mathbb{R}^{h \times h}$，该参数用来描述在当前时间步如何使用上一时间步的隐藏变量。具体来说，时间步$t$的隐藏变量的计算由当前时间步的输入和上一时间步的隐藏变量共同决定：
+现在我们考虑输入数据存在时间相关性的情况。假设$\boldsymbol{X}_t \in \mathbb{R}^{n \times d}$是序列中时间步t的小批量输入，$\boldsymbol{H}_t \in \mathbb{R}^{n \times h}$是该时间步的隐藏变量。与多层感知机不同的是，这里我们保存上一时间步的隐藏变量$H_{t−1}$，并引入一个新的权重参数$\boldsymbol{W}_{hh} \in \mathbb{R}^{h \times h}$，该参数用来描述在当前时间步如何使用上一时间步的隐藏变量。具体来说，时间步$t$的隐藏变量的计算由当前时间步的输入和上一时间步的隐藏变量共同决定：
 $$
 \boldsymbol{H}_t = \phi(\boldsymbol{X}_t \boldsymbol{W}_{xh} + \boldsymbol{H}_{t-1} \boldsymbol{W}_{hh}  + \boldsymbol{b}_h).
 $$
@@ -28,7 +28,7 @@ $$
 $$
 \boldsymbol{O}_t = \boldsymbol{H}_t \boldsymbol{W}_{hq} + \boldsymbol{b}_q.
 $$
-循环神经网络的参数包括隐藏层的权重$\boldsymbol{W}_{xh} \in \mathbb{R}^{d \times h}$、$\boldsymbol{W}_{hh} \in \mathbb{R}^{h \times h}$和偏差 $\boldsymbol{b}_h \in \mathbb{R}^{1 \times h}$，以及输出层的权重$\boldsymbol{W}_{hq} \in \mathbb{R}^{h \times q}$和偏差$\boldsymbol{b}_q \in \mathbb{R}^{1 \times q}$。值得一提的是，即便在不同时间步，循环神经网络也始终使用这些模型参数。因此，循环神经网络模型参数的数量不随时间步的增加而增长。
+循环神经网络的参数包括隐藏层的权重$\boldsymbol{W}_{xh} \in \mathbb{R}^{d \times h}$、$\boldsymbol{W}_{hh} \in \mathbb{R}^{h \times h}$和偏差 $\boldsymbol{b}_h \in \mathbb{R}^{1 \times h}$，以及输出层的权重$\boldsymbol{W}_{hq} \in \mathbb{R}^{h \times q}$和偏差$\boldsymbol{b}_q \in \mathbb{R}^{1 \times q}$。值得一提的是，即便在不同时间步，循环神经网络也始终使用这些模型参数。因此，**循环神经网络模型参数的数量不随时间步的增加而增长**。
 
 图6.1展示了循环神经网络在3个相邻时间步的计算逻辑。在时间步$t$，隐藏状态的计算可以看成是将输入$X_t$和前一时间步隐藏状态$H_{t−1}$连结后输入一个激活函数为$\phi$的全连接层。该全连接层的输出就是当前时间步的隐藏状态$H_t$，且模型参数为$W_{xh}$与$W_{hh}$的连结，偏差为$b_h$。当前时间步$t$的隐藏状态$H_t$将参与下一个时间步$t+1$的隐藏状态$H_{t+1}$的计算，并输入到当前时间步的全连接输出层。
 
@@ -76,11 +76,11 @@ $$
 
 ## 3.4 记忆细胞
 
-我们可以通过元素值域在$[0,1]$的输入门、遗忘门和输出门来控制隐藏状态中信息的流动，这一般也是通过使用按元素乘法（符号为⊙）来实现的。当前时间步记忆细胞$\boldsymbol{C}_t \in \mathbb{R}^{n \times h}$的计算组合了上一时间步记忆细胞和当前时间步候选记忆细胞的信息，并通过遗忘门和输入门来控制信息的流动：
+我们可以通过元素值域在$[0,1]$的输入门、遗忘门和输出门来控制隐藏状态中信息的流动，这一般也是通过使用按元素乘法（符号为⊙）来实现的。当前时间步记忆细胞$\boldsymbol{C}_t \in \mathbb{R}^{n \times h}$的计算组**合了上一时间步记忆细胞和当前时间步候选记忆细胞的信息，并通过遗忘门和输入门来控制信息的流动：**
 $$
 \boldsymbol{C}_t = \boldsymbol{F}_t \odot \boldsymbol{C}_{t-1} + \boldsymbol{I}_t \odot \tilde{\boldsymbol{C}}_t.
 $$
-如图6.9所示，遗忘门控制上一时间步的记忆细胞$\boldsymbol{C}_{t-1}$中的信息是否传递到当前时间步，而输入门则控制当前时间步的输入$X_t$通过候选记忆细胞$\tilde{\boldsymbol{C}}_t$如何流入当前时间步的记忆细胞。如果遗忘门一直近似1且输入门一直近似0，过去的记忆细胞将一直通过时间保存并传递至当前时间步。这个设计可以应对循环神经网络中的梯度衰减问题，并更好地捕捉时间序列中时间步距离较大的依赖关系。
+如图6.9所示，遗忘门控制上一时间步的记忆细胞$\boldsymbol{C}_{t-1}$中的信息是否传递到当前时间步，而输入门则控制当前时间步的输入$X_t$通过候选记忆细胞$\tilde{\boldsymbol{C}}_t$如何流入当前时间步的记忆细胞。如果遗忘门一直近似1且输入门一直近似0，过去的记忆细胞将一直通过时间保存并传递至当前时间步**。这个设计可以应对循环神经网络中的梯度衰减问题，并更好地捕捉时间序列中时间步距离较大的依赖关系。**
 
 ![](https://zh.gluon.ai/_images/lstm_2.svg)
 
@@ -141,7 +141,7 @@ $$
 $$
 \tilde{\boldsymbol{H}}_t = \text{tanh}(\boldsymbol{X}_t \boldsymbol{W}_{xh} + \left(\boldsymbol{R}_t \odot \boldsymbol{H}_{t-1}\right) \boldsymbol{W}_{hh} + \boldsymbol{b}_h),
 $$
-其中$\boldsymbol{W}_{xh} \in \mathbb{R}^{d \times h}$和$\boldsymbol{W}_{hh} \in \mathbb{R}^{h \times h}$是权重参数，$\boldsymbol{b}_h \in \mathbb{R}^{1 \times h}$是偏差参数。从上面这个公式可以看出，重置门控制了上一时间步的隐藏状态如何流入当前时间步的候选隐藏状态。而上一时间步的隐藏状态可能包含了时间序列截至上一时间步的全部历史信息。因此，重置门可以用来丢弃与预测无关的历史信息。
+其中$\boldsymbol{W}_{xh} \in \mathbb{R}^{d \times h}$和$\boldsymbol{W}_{hh} \in \mathbb{R}^{h \times h}$是权重参数，$\boldsymbol{b}_h \in \mathbb{R}^{1 \times h}$是偏差参数。从上面这个公式可以看出，**重置门控制了上一时间步的隐藏状态如何流入当前时间步的候选隐藏状态**。而上一时间步的隐藏状态可能包含了时间序列截至上一时间步的全部历史信息。因此，**重置门可以用来丢弃与预测无关的历史信息**。
 
 ### 4.1.3 隐藏状态
 
@@ -155,7 +155,7 @@ $$
     门控循环单元中隐藏状态的计算。这里的 ⊙ 是按元素乘法
 </center>
 
-值得注意的是，更新门可以控制隐藏状态应该如何被包含当前时间步信息的候选隐藏状态所更新，如图6.6所示。假设更新门在时间步$t′$到$t（t′<t）$之间一直近似1。那么，在时间步$t′$到$t$之间的输入信息几乎没有流入时间步$t$的隐藏状态$H_t$。实际上，这可以看作是较早时刻的隐藏状态$H_{t′−1}$一直通过时间保存并传递至当前时间步$t$。这个设计可以应对循环神经网络中的梯度衰减问题，并更好地捕捉时间序列中时间步距离较大的依赖关系。
+值得注意的是，**更新门可以控制隐藏状态应该如何被包含当前时间步信息的候选隐藏状态所更新**，如图6.6所示。假设更新门在时间步$t′$到$t（t′<t）$之间一直近似1。那么，在时间步$t′$到$t$之间的输入信息几乎没有流入时间步$t$的隐藏状态$H_t$。实际上，这可以看作是较早时刻的隐藏状态$H_{t′−1}$一直通过时间保存并传递至当前时间步$t$。这个设计可以应对循环神经网络中的梯度衰减问题，并更好地捕捉时间序列中时间步距离较大的依赖关系。
 
 我们对门控循环单元的设计稍作总结：
 
@@ -194,7 +194,7 @@ $$
 
 ![[公式]](https://www.zhihu.com/equation?tex=%5Cfrac%7B%5Cpartial%7BL_%7B3%7D%7D%7D%7B%5Cpartial%7BW_%7Bs%7D%7D%7D%3D%5Cfrac%7B%5Cpartial%7BL_%7B3%7D%7D%7D%7B%5Cpartial%7BO_%7B3%7D%7D%7D%5Cfrac%7B%5Cpartial%7BO_%7B3%7D%7D%7D%7B%5Cpartial%7BS_%7B3%7D%7D%7D%5Cfrac%7B%5Cpartial%7BS_%7B3%7D%7D%7D%7B%5Cpartial%7BW_%7Bs%7D%7D%7D%2B%5Cfrac%7B%5Cpartial%7BL_%7B3%7D%7D%7D%7B%5Cpartial%7BO_%7B3%7D%7D%7D%5Cfrac%7B%5Cpartial%7BO_%7B3%7D%7D%7D%7B%5Cpartial%7BS_%7B3%7D%7D%7D%5Cfrac%7B%5Cpartial%7BS_%7B3%7D%7D%7D%7B%5Cpartial%7BS_%7B2%7D%7D%7D%5Cfrac%7B%5Cpartial%7BS_%7B2%7D%7D%7D%7B%5Cpartial%7BW_%7Bs%7D%7D%7D%2B%5Cfrac%7B%5Cpartial%7BL_%7B3%7D%7D%7D%7B%5Cpartial%7BO_%7B3%7D%7D%7D%5Cfrac%7B%5Cpartial%7BO_%7B3%7D%7D%7D%7B%5Cpartial%7BS_%7B3%7D%7D%7D%5Cfrac%7B%5Cpartial%7BS_%7B3%7D%7D%7D%7B%5Cpartial%7BS_%7B2%7D%7D%7D%5Cfrac%7B%5Cpartial%7BS_%7B2%7D%7D%7D%7B%5Cpartial%7BS_%7B1%7D%7D%7D%5Cfrac%7B%5Cpartial%7BS_%7B1%7D%7D%7D%7B%5Cpartial%7BW_%7Bs%7D%7D%7D)
 
-可以看出对于 ![[公式]](https://www.zhihu.com/equation?tex=W_%7B0%7D) 求偏导并没有长期依赖，但是对于 ![[公式]](https://www.zhihu.com/equation?tex=W_%7Bx%7D%E3%80%81W_%7Bs%7D) 求偏导，会随着时间序列产生长期依赖。因为 ![[公式]](https://www.zhihu.com/equation?tex=S_%7Bt%7D) 随着时间序列向前传播，而 ![[公式]](https://www.zhihu.com/equation?tex=S_%7Bt%7D) 又是 ![[公式]](https://www.zhihu.com/equation?tex=W_%7Bx%7D%E3%80%81W_%7Bs%7D)的函数。
+可以看出**对于 ![[公式]](https://www.zhihu.com/equation?tex=W_%7B0%7D) 求偏导并没有长期依赖，但是对于 ![[公式]](https://www.zhihu.com/equation?tex=W_%7Bx%7D%E3%80%81W_%7Bs%7D) 求偏导，会随着时间序列产生长期依赖**。因为 ![[公式]](https://www.zhihu.com/equation?tex=S_%7Bt%7D) 随着时间序列向前传播，而 ![[公式]](https://www.zhihu.com/equation?tex=S_%7Bt%7D) 又是 ![[公式]](https://www.zhihu.com/equation?tex=W_%7Bx%7D%E3%80%81W_%7Bs%7D)的函数。
 
 根据上述求偏导的过程，我们可以得出任意时刻对 ![[公式]](https://www.zhihu.com/equation?tex=W_%7Bx%7D%E3%80%81W_%7Bs%7D) 求偏导的公式：
 
@@ -212,7 +212,7 @@ $$
 
 ![img](https://pic2.zhimg.com/v2-58e93fc298777fb33776f0fe963fedad_r.jpg)
 
-由上图可以看出 ![[公式]](https://www.zhihu.com/equation?tex=tanh%5E%7B%27%7D%5Cleq1) ，对于训练过程大部分情况下tanh的导数是小于1的，因为很少情况下会出现![[公式]](https://www.zhihu.com/equation?tex=W_%7Bx%7DX_%7Bj%7D%2BW_%7Bs%7DS_%7Bj-1%7D%2Bb_%7B1%7D%3D0) ，如果 ![[公式]](https://www.zhihu.com/equation?tex=W_%7Bs%7D) 也是一个大于0小于1的值，则当t很大时 ![[公式]](https://www.zhihu.com/equation?tex=%5Cprod_%7Bj%3Dk%2B1%7D%5E%7Bt%7D%7Btanh%5E%7B%27%7D%7DW_%7Bs%7D) ，就会趋近于0，和 ![[公式]](https://www.zhihu.com/equation?tex=0.01%5E%7B50%7D) 趋近与0是一个道理。同理当 ![[公式]](https://www.zhihu.com/equation?tex=W_%7Bs%7D) 很大时 ![[公式]](https://www.zhihu.com/equation?tex=%5Cprod_%7Bj%3Dk%2B1%7D%5E%7Bt%7D%7Btanh%5E%7B%27%7D%7DW_%7Bs%7D) 就会趋近于无穷，这就是RNN中梯度消失和爆炸的原因。
+由上图可以看出 ![[公式]](https://www.zhihu.com/equation?tex=tanh%5E%7B%27%7D%5Cleq1) ，对于训练过程大部分情况下tanh的导数是小于1的，因为很少情况下会出现![[公式]](https://www.zhihu.com/equation?tex=W_%7Bx%7DX_%7Bj%7D%2BW_%7Bs%7DS_%7Bj-1%7D%2Bb_%7B1%7D%3D0) ，如果 ![[公式]](https://www.zhihu.com/equation?tex=W_%7Bs%7D) 也是一个大于0小于1的值，则当t很大时 ![[公式]](https://www.zhihu.com/equation?tex=%5Cprod_%7Bj%3Dk%2B1%7D%5E%7Bt%7D%7Btanh%5E%7B%27%7D%7DW_%7Bs%7D) ，就会趋近于0，和 ![[公式]](https://www.zhihu.com/equation?tex=0.01%5E%7B50%7D) 趋近与0是一个道理。同理**当 ![[公式]](https://www.zhihu.com/equation?tex=W_%7Bs%7D) 很大时 ![[公式]](https://www.zhihu.com/equation?tex=%5Cprod_%7Bj%3Dk%2B1%7D%5E%7Bt%7D%7Btanh%5E%7B%27%7D%7DW_%7Bs%7D) 就会趋近于无穷，这就是RNN中梯度消失和爆炸的原因。**
 
 至于怎么避免这种现象，让我在看看 ![[公式]](https://www.zhihu.com/equation?tex=%5Cfrac%7B%5Cpartial%7BL_%7Bt%7D%7D%7D%7B%5Cpartial%7BW_%7Bx%7D%7D%7D%3D%5Csum_%7Bk%3D0%7D%5E%7Bt%7D%7B%5Cfrac%7B%5Cpartial%7BL_%7Bt%7D%7D%7D%7B%5Cpartial%7BO_%7Bt%7D%7D%7D%5Cfrac%7B%5Cpartial%7BO_%7Bt%7D%7D%7D%7B%5Cpartial%7BS_%7Bt%7D%7D%7D%7D%28%5Cprod_%7Bj%3Dk%2B1%7D%5E%7Bt%7D%7B%5Cfrac%7B%5Cpartial%7BS_%7Bj%7D%7D%7D%7B%5Cpartial%7BS_%7Bj-1%7D%7D%7D%7D%29%5Cfrac%7B%5Cpartial%7BS_%7Bk%7D%7D%7D%7B%5Cpartial%7BW_%7Bx%7D%7D%7D) 梯度消失和爆炸的根本原因就是 ![[公式]](https://www.zhihu.com/equation?tex=%5Cprod_%7Bj%3Dk%2B1%7D%5E%7Bt%7D%7B%5Cfrac%7B%5Cpartial%7BS_%7Bj%7D%7D%7D%7B%5Cpartial%7BS_%7Bj-1%7D%7D%7D%7D) 这一坨，要消除这种情况就需要把这一坨在求偏导的过程中去掉，至于怎么去掉，一种办法就是使 ![[公式]](https://www.zhihu.com/equation?tex=%7B%5Cfrac%7B%5Cpartial%7BS_%7Bj%7D%7D%7D%7B%5Cpartial%7BS_%7Bj-1%7D%7D%7D%7D%5Capprox1) 另一种办法就是使 ![[公式]](https://www.zhihu.com/equation?tex=%7B%5Cfrac%7B%5Cpartial%7BS_%7Bj%7D%7D%7D%7B%5Cpartial%7BS_%7Bj-1%7D%7D%7D%7D%5Capprox0) 。其实这就是LSTM做的事情，至于细节问题我在[LSTM如何解决梯度消失问题](https://zhuanlan.zhihu.com/p/28749444)这篇文章中给出了介绍。
 
@@ -294,3 +294,70 @@ LSTM遗忘门值可以选择在[0,1]之间，让LSTM来改善梯度消失的情�
 
 # 8.LSTM和GRU的区别
 
+## **前言**
+
+因为自己LSTM和GRU学的时间相隔很远，并且当时学的也有点小小的蒙圈，也因为最近一直在用lstm，gru等等，所以今天没事好好缕了一下，接下来跟着我一起区分并且每个单元全都非常深刻的记一下把。
+
+### 一、LSTM
+
+这里我们只看内部结构
+
+![img](https://pic1.zhimg.com/v2-401d95259f6c295a376a1348af685170_r.jpg)
+
+公式为
+
+![img](https://pic1.zhimg.com/v2-2db6e4bcdf68b7e53f8b911469877b40_r.jpg)
+
+看内部结构的话为
+
+![img](https://pic1.zhimg.com/v2-986ec32dbf4014de18c43b1170726b80_r.jpg)
+
+接下来是我的理解和记忆方法以及区分。 自己对上面的图片进行了编辑，单元和公式一一对应颜色，方便自己和他人观看。
+
+![img](https://pic1.zhimg.com/v2-d7227ffd6e3c292441e41527f6b2f0f0_r.jpg)
+
+
+
+一张图清晰地搞定LSTM。 个人理解简短的说明这张图。
+
+1. 首先输入为三个值，一个是此刻的输入值x，另一个是上一时刻的状态值c，最后一个是上一个单元的输出h
+2. 最终输出为两个值，一个是此刻产生的状态值c和输出h
+3. 首先是输入值x和上一个单元的输出h，分别两个输入都有对应的权重，在经过sigmoid激活作用下得到0-1的值，也就是三个门值
+4. 和3差不多，依然还是 输入值x和上一个单元的输出h，两个值有对应的权重和3中的描述一模一样，唯一的区别在于有一个tanh激活函数，最后相当于得到此时输入得到的当前state，也就是new memory。这里可以理解为输入其实是近似的x和h的concatenate操作，经过正常的神经网络的权重，最后经过tanh激活函数得到此时输入的当前的state，x相当于此刻的输入，h为前面历史的输入，合在一起就是整个序列的信息，也就是此时的new memory。
+5. 最后输出的state，也就是final memory的计算利用了input gate和forget gate，output gate只与输出有关。final memory的计算自然而然和上一步算得此时的记忆state相关并且和上一个输出的final memory相关，故为忘记门和Ct-1的乘积加上上一步算出来的此时单元的C和输入门的乘积为最终的state（故 c）
+6. 输出门只与输出相关，最终的输出h为输出门乘以tanh（c）
+
+致此这里LSTM 梳理完毕
+
+### 二、GRU
+
+内部结构和公式
+
+![img](https://pic2.zhimg.com/v2-34a616c79082449905cedac8e4a7b4d9_r.jpg)
+
+![img](https://pic1.zhimg.com/v2-61a4a0e2bbeafbba197ea5a008e85c78_r.jpg)
+
+自己对上面的图片进行了编辑，单元和公式一一对应颜色，方便自己和他人观看。 .
+
+![img](https://pic3.zhimg.com/v2-acbab4b54da5457814a3bac334a544aa_r.jpg)
+
+
+
+1. 这里GRU只有两个gate，一个是reset gate， 一个是update gate， update gate的作用类似于input gate和forget gate，(1-z)相当于input gate， z相当于forget gate。
+2. 输入为两个值，输出也为一个值，输入为输入此时时刻值x和上一个时刻的输出ht-1， 输出这个时刻的输出值ht
+3. 首先依然是利用xt和ht-1经过权重相乘通过sigmoid，得到两个0-1的值，即两个门值。
+4. 接下来这里有一些不同，并且经常容易搞混淆。对于LSTM来说依然还是xt与ht-1分别权重相乘相加，之后经过tanh函数为此时的new memory，而GRU为在这个计算过程中，在ht-1与权重乘积之后和reset gate相乘，之后最终得到new memory，这里的reset gate的作用为让这个new memory包括之前的ht-1的信息的多少。
+5. 接下来和lstm得到final memory其实一样，只是GRU只有两个输入，一个输出，其实这里h即输出也是state，就是说GRU的输出和state是一个值，所以4步骤得到的是new h，这步骤得到的是final h，通过update gate得到。
+
+### 三、细数LSTM与GRU之间的不同
+
+### 3.1 结构上
+
+1. lstm为三个输入xt，ht-1， ct-1，两个输出。 gru为两个输入xt， ht-1，一个输出ht，输出即state。
+2. lstm有三个门，输入输出忘记门。 gru有两个门，reset，update 门。
+3. update 类似于 input gate和forget gate
+
+### 3.2 功能上
+
+1. GRU参数更少，训练速度更快，相比之下需要的数据量更少
+2. 如果有足够的数据，LSTM的效果可能好于GRU
