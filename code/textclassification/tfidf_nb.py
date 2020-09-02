@@ -9,7 +9,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 
 """
-基于tfidf和朴素贝叶斯的文本分类
+基于tfidf和朴素贝叶斯或者LogisticRegression的文本分类
 """
 
 
