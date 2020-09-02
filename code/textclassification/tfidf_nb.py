@@ -80,10 +80,21 @@ def train(vectorMatrix, labels, modelType="NB"):
 
 
 def saveModel(clf, savedPath):
+    """
+    保存模型
+    :param clf:
+    :param savedPath:
+    :return:
+    """
     joblib.dump(clf, savedPath)
 
 
 def loadModel(savedPath):
+    """
+    加载模型
+    :param savedPath:
+    :return:
+    """
     return joblib.load(savedPath)
 
 
