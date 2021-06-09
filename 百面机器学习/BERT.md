@@ -22,7 +22,7 @@ BERT 只使用了 Transformer 的 Encoder 模块，原论文中，作者分别�
 
 图示如下：
 
-![img](https://mmbiz.qpic.cn/mmbiz_png/DHibuUfpZvQehFqbCnZib2Mbz4jbBeOXIyJqER3l9nTtiatLMHEv3pzh5yjre0CsM4PYut3XMvyc8bpfibjh3ia7RUQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+![img](https://gitee.com/chengbo123/images/raw/master/640)
 
 **「需要注意的是，与 Transformer 本身的 Encoder 端相比，BERT 的 Transformer Encoder 端输入的向量表示，多了 Segment Embeddings。」**
 
@@ -36,7 +36,7 @@ Masked LM 的任务描述为：给定一句话，随机抹去这句话中的一�
 
 ![img](https://mmbiz.qpic.cn/mmbiz_png/DHibuUfpZvQehFqbCnZib2Mbz4jbBeOXIyOv9R1I1C7LC6MCXI4T5f4J5736fE7rS8LRfXVq82ibibLSkbW8OhNiaJA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
-BERT 模型的这个预训练过程其实就是在模仿我们学语言的过程，思想来源于**「完形填空」**的任务。具体来说，文章作者在一句话中随机选择 15% 的词汇用于预测。对于在原句中被抹去的词汇， 80% 情况下采用一个特殊符号 [MASK] 替换， 10% 情况下采用一个任意词替换，剩余 10% 情况下保持原词汇不变。
+BERT 模型的这个预训练过程其实就是在模仿我们学语言的过程，思想来源于**「完形填空」**的任务。具体来说，文章作者在一句话中==随机选择 15% 的词汇用于预测==。对于在原句中被抹去的词汇， ==80% 情况下采用一个特殊符号 [MASK] 替换， 10% 情况下采用一个任意词替换，剩余 10% 情况下保持原词汇不变==。
 
 这么做的主要原因是：在后续微调任务中语句中并不会出现 [MASK] 标记，而且这么做的另一个好处是：预测一个词汇时，模型并不知道输入对应位置的词汇是否为正确的词汇（ 10% 概率），这就迫使模型更多地依赖于上下文信息去预测词汇，并且赋予了模型一定的纠错能力。上述提到了这样做的一个缺点，其实这样做还有另外一个缺点，就是每批次数据中只有 15% 的标记被预测，这意味着模型可能需要更多的预训练步骤来收敛。
 
@@ -229,4 +229,18 @@ word2vec 到 BERT 的改进之处其实没有很明确的答案，如同上面�
 
 ## 本文参考资料
 
-[1]Pre-training of Deep Bidirectional Transformers for Language Understanding: https://arxiv.org/abs/1810.04805[2]BERT has a Mouth, and It Must Speak: BERT as a Markov Random Field Language Model: https://arxiv.org/abs/1902.04094[3]MASS: Masked Sequence to Sequence Pre-training for Language Generation: https://arxiv.org/abs/1905.02450[4]Unified Language Model Pre-training for Natural Language Understanding and Generation: https://arxiv.org/abs/1905.03197[5]BERT 模型详解: http://fancyerii.github.io/2019/03/09/bert-theory/[6]XLNet 原理: http://fancyerii.github.io/2019/06/30/xlnet-theory/[7]图解 BERT 模型：从零开始构建 BERT: http://url.cn/5vprrTM[8]XLNet:运行机制及和 Bert 的异同比较: https://zhuanlan.zhihu.com/p/70257427[9]如何评价 BERT 模型？: https://www.zhihu.com/question/298203515[10]【NLP】Google BERT 详解: https://zhuanlan.zhihu.com/p/46652512
+[1]Pre-training of Deep Bidirectional Transformers for Language Understanding: https://arxiv.org/abs/1810.04805
+
+[2]BERT has a Mouth, and It Must Speak: BERT as a Markov Random Field Language Model: https://arxiv.org/abs/1902.04094
+
+[3]MASS: Masked Sequence to Sequence Pre-training for Language Generation: https://arxiv.org/abs/1905.02450
+
+[4]Unified Language Model Pre-training for Natural Language Understanding and Generation: https://arxiv.org/abs/1905.03197
+
+[5]BERT 模型详解: http://fancyerii.github.io/2019/03/09/bert-theory/
+
+[6]XLNet 原理: http://fancyerii.github.io/2019/06/30/xlnet-theory/
+
+[7]图解 BERT 模型：从零开始构建 BERT: http://url.cn/5vprrTM
+
+[8]XLNet:运行机制及和 Bert 的异同比较: https://zhuanlan.zhihu.com/p/70257427[9]如何评价 BERT 模型？: https://www.zhihu.com/question/298203515[10]【NLP】Google BERT 详解: https://zhuanlan.zhihu.com/p/46652512

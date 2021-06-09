@@ -36,7 +36,7 @@ x是一个包含5个单词的句子, $w_0,w_1,w_2,w_3,w_4$,在句子x中，$[w_0
 
 ### 1.4 CRF层可以从训练数据中学到标签约束
 
-不加CRF层，直接使用softmax会产生无效的标签顺序。**CRF层可以在预测的标签之间添加约束，确保标签有效**，这些约束可以右CRF层在训练过程中自动学习得到。
+不加CRF层，直接使用softmax会产生无效的标签顺序。**CRF层可以在预测的标签之间添加约束，确保标签有效**，这些约束可以由CRF层在训练过程中自动学习得到。
 
 约束条件可以是：
 
@@ -50,19 +50,19 @@ x是一个包含5个单词的句子, $w_0,w_1,w_2,w_3,w_4$,在句子x中，$[w_0
 
 emission分数来自BiLSTM层，即BiLSTM层输出的各个单词的标签得分。
 
-![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9LWVNEVG1PVlp2cDRpY2NOb2lhUmRSWFd1WTFYUUpmYlhpYnZ2ZWliRlpUUGJyRXBpYnh5enFOc1dpYTZjQ3VuVzgzdEt3UGtNdUFKTTBpY25QTWliU2lheEFxRndaUS82NDA?x-oss-process=image/format,png)
+![](https://gitee.com/chengbo123/images/raw/master/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6X3BuZy9LWVNEVG1PVlp2cDRpY2NOb2lhUmRSWFd1WTFYUUpmYlhpYnZ2ZWliRlpUUGJyRXBpYnh5enFOc1dpYTZjQ3VuVzgzdEt3UGtNdUFKTTBpY25QTWliU2lheEFxRndaUS82NDA)
 为方便起见，给每个标签一个索引号，如：
 
-![](https://pic2.zhimg.com/v2-d6ed1cadb710ae868f4582722dc7810d_r.jpg)
-$x_{iy_j}$表示emission分数。i是单词索引，$y_j$是label索引，即单词i为标签$y_j$的得分
+![](https://gitee.com/chengbo123/images/raw/master/v2-d6ed1cadb710ae868f4582722dc7810d_r.jpg)
+$x_{iy_j}$表示==emission分数==。i是单词索引，$y_j$是label索引，即单词i为标签$y_j$的得分
 
 ### 2.2 Transition得分
 
-使用$y_{y_iy_j}$表示transition得分，表示从标签$y_i$转移到标签$y_j$的得分。有一个矩阵，存储了所有标签之间的转移得分情况。为了使transition评分矩阵更健壮，我们将添加另外两个标签，START和END。START是指一个句子的开头，而不是第一个单词。END表示句子的结尾。
+使用$y_{y_iy_j}$表示==transition得分==，表示从标签$y_i$转移到标签$y_j$的得分。有一个矩阵，存储了所有标签之间的转移得分情况。为了使transition评分矩阵更健壮，我们将添加另外两个标签，START和END。START是指一个句子的开头，而不是第一个单词。END表示句子的结尾。
 
 下面是一个transition得分矩阵的例子，包括额外添加的START和END标签。
 
-![](https://pic3.zhimg.com/v2-b8e713dbf24afb0431f5670e10c94a86_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-b8e713dbf24afb0431f5670e10c94a86_r.jpg)
 通过transition矩阵，可以学习到一些有用约束。transition矩阵是在模型训练过程中学习而来，输入BiLSTM-CRF模型的一个参数。在训练之前，随机初始化transition矩阵，训练过程中该矩阵会自动更新，最终趋于合理。
 
 ### 2.3 CRF损失函数
@@ -87,7 +87,7 @@ $$
 
 在训练过程中，CRF损失函数只需要两个分数：真实路径分数和所有可能路径的总分数。真实路径得分占比在训练过程中会不断增大。那么$S_i$该怎么计算呢？
 
-![](https://pic4.zhimg.com/v2-e3255536f84eaf2e5cf295de0ad2c17b_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-e3255536f84eaf2e5cf295de0ad2c17b_r.jpg)
 
 ### 2.5 所有可能路径的得分
 
@@ -101,18 +101,19 @@ $$
 $$
 log(e^{S_1}+e^{S_2}+\dots+e^{S_N})
 $$
-![](https://pic4.zhimg.com/v2-cd4b642818feed74de3410daeecedc6b_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-cd4b642818feed74de3410daeecedc6b_r.jpg)
 
-![](https://pic1.zhimg.com/v2-3441d09333a449e8ecaf620a1ea574a4_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-3441d09333a449e8ecaf620a1ea574a4_r.jpg)
 
-![](https://pic1.zhimg.com/v2-2807822cc1293b2bfd8e5a107ae0a088_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-2807822cc1293b2bfd8e5a107ae0a088_r.jpg)
 
-![](https://pic3.zhimg.com/v2-41bd4f0249925ce774d65f4e03d5d4f6_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-41bd4f0249925ce774d65f4e03d5d4f6_r.jpg)
 
-![](https://pic3.zhimg.com/v2-f7233db17ebbb5a4d904bf261cea89ca_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-f7233db17ebbb5a4d904bf261cea89ca_r.jpg)
 
-![](https://pic4.zhimg.com/v2-8d7a12744e48116451a1de50ffd87bb7_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-8d7a12744e48116451a1de50ffd87bb7_r.jpg)
 
-![](https://pic4.zhimg.com/v2-3baea8e873dcfe6dcfc8ed5d7b689f53_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-3baea8e873dcfe6dcfc8ed5d7b689f53_r.jpg)
 
-![](https://pic1.zhimg.com/v2-95260da313998d9121894e07083321d4_r.jpg)
+![](https://gitee.com/chengbo123/images/raw/master/v2-95260da313998d9121894e07083321d4_r.jpg)
+

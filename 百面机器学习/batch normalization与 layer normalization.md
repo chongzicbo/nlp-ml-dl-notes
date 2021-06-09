@@ -4,7 +4,9 @@
 
 那么NLP领域中，我们很少遇到BN，而出现了很多的LN，例如bert等模型都使用layer normalization。这是为什么呢？
 
-## 这要了解BN与LN之间的主要区别。
+这要了解
+
+## BN与LN之间的主要区别
 
 **主要区别在于 normalization的方向不同！**
 
